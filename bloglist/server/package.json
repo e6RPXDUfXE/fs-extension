@@ -1,0 +1,31 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch --env-file=.env index.js",
+    "test": "cross-env  NODE_ENV=test node --env-file=.env --test",
+    "apitest": "npm test -- tests/blog_api.test.js",
+    "usertest": "npm test -- --test-name-pattern='user' tests/blog_api.test.js",
+    "lint": "eslint .",
+    "start:test": "cross-env NODE_ENV=test node --watch --env-file=.env index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cross-env": "^10.1.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lodash": "^4.18.1",
+    "mongoose": "^9.9.5",
+    "morgan": "^1.12.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "supertest": "^7.2.2"
+  }
+}
