@@ -10,12 +10,13 @@ import blogService from "./services/blogs"
 import loginService from "./services/login"
 import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom"
 import { Container, AppBar, Toolbar, Button, Typography } from "@mui/material"
+import { useNotificationActions } from "./notificationStore"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
   const navigate = useNavigate()
+  const { setNotification: showNotification } = useNotificationActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -32,13 +33,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const showNotification = (text, type) => {
-    setNotification({ text, type })
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
 
   const handleLogin = async (credentials) => {
     try {
@@ -156,7 +150,7 @@ const App = () => {
       </AppBar>
 
       <ErrorBoundary>
-        <Notification notification={notification} />
+        <Notification />
 
         <Routes>
           <Route
