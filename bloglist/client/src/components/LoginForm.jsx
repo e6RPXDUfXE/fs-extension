@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { TextField, Button } from '@mui/material'
+import { useState } from "react"
+import { TextField, Button } from "@mui/material"
 const LoginForm = ({ handleLogin }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     await handleLogin({ username, password })
-    setUsername('')
-    setPassword('')
+    setUsername("")
+    setPassword("")
   }
 
   return (

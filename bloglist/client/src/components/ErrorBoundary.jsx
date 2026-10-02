@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('ErrorBoundary caught an error', error, info)
+    console.error("ErrorBoundary caught an error", error, info)
   }
 
   render() {
@@ -20,7 +20,9 @@ class ErrorBoundary extends React.Component {
         <div>
           <h2>Something went wrong :(</h2>
           <p>{this.state.error.message}</p>
-          <button onClick={() => this.setState({ hasError: false, error: null })}>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+          >
             try again
           </button>
         </div>
