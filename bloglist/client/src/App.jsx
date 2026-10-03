@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import NavBar from "./components/NavBar"
 import Notification from "./components/Notification"
 import Blog from "./components/Blog"
 import LoginForm from "./components/LoginForm"
@@ -6,100 +7,28 @@ import BlogForm from "./components/BlogForm"
 import BlogList from "./components/BlogList"
 import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
-import blogService from "./services/blogs"
-import loginService from "./services/login"
-import { Routes, Route, Link, useNavigate } from "react-router-dom"
-import { Container, AppBar, Toolbar, Button, Typography } from "@mui/material"
-import { useNotificationActions } from "./notificationStore"
+import { Routes, Route } from "react-router-dom"
+import { Container } from "@mui/material"
 import { useBlogActions } from "./blogStore"
+import { useUserActions } from "./userStore"
 
 const App = () => {
-  const [user, setUser] = useState(null)
-  const navigate = useNavigate()
-  const { setNotification: showNotification } = useNotificationActions()
-  const { initialize } = useBlogActions()
+  const { initialize: initializeBlogs } = useBlogActions()
+  const { initialize: initializeUser } = useUserActions()
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
-  const handleLogin = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials)
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      showNotification(`Welcome ${user.name}`, "success")
-      navigate("/")
-    } catch {
-      showNotification("Wrong credentials", "error")
-    }
-  }
-
-  const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogappUser")
-    setUser(null)
-    showNotification("You have been logged out", "success")
-    navigate("/")
-  }
-
-  const hoverStyle = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } }
+    initializeBlogs()
+    initializeUser()
+  }, [initializeBlogs, initializeUser])
 
   return (
     <Container>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Blog App
-          </Typography>
-          <Button color="inherit" component={Link} to="/" sx={hoverStyle}>
-            blogs
-          </Button>
-          {user && (
-            <Button
-              color="inherit"
-              component={Link}
-              to="/create"
-              sx={hoverStyle}
-            >
-              new blog
-            </Button>
-          )}
-          {user ? (
-            <Button color="inherit" onClick={handleLogout} sx={hoverStyle}>
-              logout
-            </Button>
-          ) : (
-            <Button
-              color="inherit"
-              component={Link}
-              to="/login"
-              sx={hoverStyle}
-            >
-              login
-            </Button>
-          )}
-        </Toolbar>
-      </AppBar>
-
+      <NavBar />
       <ErrorBoundary>
         <Notification />
-
         <Routes>
-          <Route
-            path="/login"
-            element={<LoginForm handleLogin={handleLogin} />}
-          />
-          <Route path="/blogs/:id" element={<Blog user={user} />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/blogs/:id" element={<Blog />} />
           <Route path="/create" element={<BlogForm />} />
           <Route path="/" element={<BlogList />} />
           <Route path="*" element={<NotFound />} />

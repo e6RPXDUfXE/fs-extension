@@ -1,4 +1,4 @@
-const SERVER_URL = 'http://localhost:3001'
+const SERVER_URL = 'http://localhost:3003'
 
 export const resetDatabase = async request => {
   await request.post(`${SERVER_URL}/api/testing/reset`)

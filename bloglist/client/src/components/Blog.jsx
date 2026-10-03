@@ -1,6 +1,7 @@
 import { useBlog, useBlogActions } from "../blogStore"
 import { useNotificationActions } from "../notificationStore"
 import { useParams, useNavigate } from "react-router-dom"
+import { useUser } from "../userStore"
 import {
   Button,
   Card,
@@ -10,12 +11,13 @@ import {
   Typography,
 } from "@mui/material"
 
-const Blog = ({ user }) => {
+const Blog = () => {
   const { like, remove } = useBlogActions()
   const { setNotification } = useNotificationActions()
   const navigate = useNavigate()
   const { id } = useParams()
   const blog = useBlog(id)
+  const user = useUser()
 
   if (!blog) {
     return null

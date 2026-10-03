@@ -1,14 +1,28 @@
 import { useState } from "react"
 import { TextField, Button } from "@mui/material"
-const LoginForm = ({ handleLogin }) => {
+import { useNavigate } from "react-router-dom"
+import { useUserActions } from "../userStore"
+import { useNotificationActions } from "../notificationStore"
+
+const LoginForm = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
+  const { login } = useUserActions()
+  const { setNotification } = useNotificationActions()
+  const navigate = useNavigate()
+
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await handleLogin({ username, password })
-    setUsername("")
-    setPassword("")
+    try {
+      const user = await login({ username, password })
+      setNotification(`Welcome ${user.name}`, "success")
+      setUsername("")
+      setPassword("")
+      navigate("/")
+    } catch {
+      setNotification("Wrong credentials", "error")
+    }
   }
 
   return (
@@ -33,11 +47,9 @@ const LoginForm = ({ handleLogin }) => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <div>
-          <Button style={{ marginTop: 10 }} variant="contained" type="submit">
-            login
-          </Button>
-        </div>
+        <Button style={{ marginTop: 10 }} variant="contained" type="submit">
+          login
+        </Button>
       </form>
     </div>
   )
