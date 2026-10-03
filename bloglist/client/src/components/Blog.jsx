@@ -1,3 +1,6 @@
+import { useBlog, useBlogActions } from "../blogStore"
+import { useNotificationActions } from "../notificationStore"
+import { useParams, useNavigate } from "react-router-dom"
 import {
   Button,
   Card,
@@ -7,18 +10,44 @@ import {
   Typography,
 } from "@mui/material"
 
-const Blog = ({ blog, user, handleDelete, handleLike }) => {
+const Blog = ({ user }) => {
+  const { like, remove } = useBlogActions()
+  const { setNotification } = useNotificationActions()
+  const navigate = useNavigate()
+  const { id } = useParams()
+  const blog = useBlog(id)
+
   if (!blog) {
     return null
   }
 
-  const handleLikeClick = async () => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
+  const handleLike = async () => {
+    try {
+      await like(blog)
+    } catch (error) {
+      setNotification(
+        `Error liking blog: ${error.response.data.error}`,
+        "error",
+      )
     }
+  }
 
-    handleLike(updatedBlog)
+  const handleDelete = async () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      try {
+        await remove(blog.id)
+        setNotification(
+          `Blog "${blog.title}" by ${blog.author} removed`,
+          "success",
+        )
+        navigate("/")
+      } catch (error) {
+        setNotification(
+          `Error deleting blog: ${error.response.data.error}`,
+          "error",
+        )
+      }
+    }
   }
 
   return (
@@ -69,17 +98,13 @@ const Blog = ({ blog, user, handleDelete, handleLike }) => {
           </Typography>
 
           {user && (
-            <Button variant="outlined" onClick={handleLikeClick}>
+            <Button variant="outlined" onClick={handleLike}>
               Like
             </Button>
           )}
 
           {user && blog.user.username === user.username && (
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleDelete(blog)}
-            >
+            <Button variant="outlined" color="error" onClick={handleDelete}>
               Remove
             </Button>
           )}

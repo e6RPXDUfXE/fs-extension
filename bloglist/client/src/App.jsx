@@ -8,22 +8,20 @@ import ErrorBoundary from "./components/ErrorBoundary"
 import NotFound from "./components/NotFound"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
-import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom"
+import { Routes, Route, Link, useNavigate } from "react-router-dom"
 import { Container, AppBar, Toolbar, Button, Typography } from "@mui/material"
 import { useNotificationActions } from "./notificationStore"
+import { useBlogActions } from "./blogStore"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
   const { setNotification: showNotification } = useNotificationActions()
+  const { initialize } = useBlogActions()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(sortedBlogs)
-    })
-  }, [])
+    initialize()
+  }, [initialize])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
@@ -53,62 +51,6 @@ const App = () => {
     showNotification("You have been logged out", "success")
     navigate("/")
   }
-
-  const addBlog = async (blogObject) => {
-    try {
-      const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog))
-      showNotification(
-        `A new blog "${returnedBlog.title}" by ${returnedBlog.author} added`,
-        "success",
-      )
-      navigate("/")
-    } catch (error) {
-      showNotification(
-        `Error creating blog:  ${error.response.data.error}`,
-        "error",
-      )
-    }
-  }
-
-  const handleDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
-        showNotification(
-          `Blog "${blog.title}" by ${blog.author} removed`,
-          "success",
-        )
-        navigate("/")
-      } catch (error) {
-        showNotification(
-          `Error deleting blog: ${error.response.data.error}`,
-          "error",
-        )
-      }
-    }
-  }
-
-  const handleLike = async (updatedBlog) => {
-    try {
-      const returnedBlog = await blogService.update(updatedBlog.id, updatedBlog)
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === returnedBlog.id ? returnedBlog : blog,
-      )
-      const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(sortedBlogs)
-    } catch (error) {
-      showNotification(
-        `Error updating blog: ${error.response.data.error}`,
-        "error",
-      )
-    }
-  }
-
-  const match = useMatch("/blogs/:id")
-
-  const blog = match ? blogs.find((b) => b.id === match.params.id) : null
 
   const hoverStyle = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } }
 
@@ -157,19 +99,9 @@ const App = () => {
             path="/login"
             element={<LoginForm handleLogin={handleLogin} />}
           />
-          <Route
-            path="/blogs/:id"
-            element={
-              <Blog
-                blog={blog}
-                user={user}
-                handleDelete={handleDelete}
-                handleLike={handleLike}
-              />
-            }
-          />
-          <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
-          <Route path="/" element={<BlogList blogs={blogs} />} />
+          <Route path="/blogs/:id" element={<Blog user={user} />} />
+          <Route path="/create" element={<BlogForm />} />
+          <Route path="/" element={<BlogList />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>

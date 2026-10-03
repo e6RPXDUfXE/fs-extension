@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom"
-const BlogList = ({ blogs }) => {
+import { useBlogs } from "../blogStore"
+const BlogList = () => {
+  const blogs = useBlogs()
   const navigate = useNavigate()
   return (
     <div>
