@@ -11,6 +11,10 @@ import {
   Stack,
   Typography,
   TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
 } from "@mui/material"
 
 const Blog = () => {
@@ -149,11 +153,14 @@ const Blog = () => {
           </form>
         )}
 
-        <ul>
-          {blog.comments.map((c, index) => (
-            <li key={index}>{c}</li>
+        <List>
+          {blog.comments.map((comment, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemIcon>•</ListItemIcon>
+              <ListItemText primary={comment} />
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </CardContent>
     </Card>
   )
