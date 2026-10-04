@@ -2,6 +2,7 @@ import { useBlog, useBlogActions } from "../blogStore"
 import { useNotificationActions } from "../notificationStore"
 import { useParams, useNavigate } from "react-router-dom"
 import { useUser } from "../loginUserStore"
+import { useState } from "react"
 import {
   Button,
   Card,
@@ -9,15 +10,17 @@ import {
   Link,
   Stack,
   Typography,
+  TextField,
 } from "@mui/material"
 
 const Blog = () => {
-  const { like, remove } = useBlogActions()
+  const { like, remove, addComment } = useBlogActions()
   const { setNotification } = useNotificationActions()
   const navigate = useNavigate()
   const { id } = useParams()
   const blog = useBlog(id)
   const user = useUser()
+  const [comment, setComment] = useState("")
 
   if (!blog) {
     return null
@@ -49,6 +52,19 @@ const Blog = () => {
           "error",
         )
       }
+    }
+  }
+
+  const handleAddComment = async (event) => {
+    try {
+      event.preventDefault()
+      await addComment(blog.id, comment)
+      setComment("")
+    } catch (error) {
+      setNotification(
+        `Error adding comment: ${error.response.data.error}`,
+        "error",
+      )
     }
   }
 
@@ -111,6 +127,33 @@ const Blog = () => {
             </Button>
           )}
         </Stack>
+      </CardContent>
+      <CardContent>
+        <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom>
+          comments
+        </Typography>
+
+        {user && (
+          <form onSubmit={handleAddComment}>
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+              <TextField
+                label="Add a comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                size="small"
+              />
+              <Button variant="contained" type="submit">
+                Add Comment
+              </Button>
+            </Stack>
+          </form>
+        )}
+
+        <ul>
+          {blog.comments.map((c, index) => (
+            <li key={index}>{c}</li>
+          ))}
+        </ul>
       </CardContent>
     </Card>
   )

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { useBlogs } from "../blogStore"
+import { Link } from "react-router-dom"
 const BlogList = () => {
   const blogs = useBlogs()
   const navigate = useNavigate()
@@ -9,7 +10,7 @@ const BlogList = () => {
       {blogs.map((blog) => (
         <div className="blog" key={blog.id}>
           <div>
-            {blog.title} {blog.author}{" "}
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}
             <button onClick={() => navigate(`/blogs/${blog.id}`)}>view</button>
           </div>
         </div>
