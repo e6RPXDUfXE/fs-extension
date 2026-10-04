@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { TextField, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
-import { useUserActions } from "../userStore"
+import { useUserActions } from "../loginUserStore"
 import { useNotificationActions } from "../notificationStore"
 
 const LoginForm = () => {

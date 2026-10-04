@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import loginService from "./services/login"
-import userService from "./services/persistentUser"
+import loginUserService from "./services/persistentUser"
 import blogService from "./services/blogs"
 
 const useUserStore = create((set) => ({
@@ -8,7 +8,7 @@ const useUserStore = create((set) => ({
 
   actions: {
     initialize: () => {
-      const user = userService.getUser()
+      const user = loginUserService.getUser()
       if (user) {
         blogService.setToken(user.token)
         set({ user })
@@ -17,14 +17,14 @@ const useUserStore = create((set) => ({
 
     login: async (credentials) => {
       const user = await loginService.login(credentials)
-      userService.saveUser(user)
+      loginUserService.saveUser(user)
       blogService.setToken(user.token)
       set({ user })
       return user
     },
 
     logout: () => {
-      userService.removeUser()
+      loginUserService.removeUser()
       blogService.setToken(null)
       set({ user: null })
     },

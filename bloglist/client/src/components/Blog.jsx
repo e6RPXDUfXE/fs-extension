@@ -1,7 +1,7 @@
 import { useBlog, useBlogActions } from "../blogStore"
 import { useNotificationActions } from "../notificationStore"
 import { useParams, useNavigate } from "react-router-dom"
-import { useUser } from "../userStore"
+import { useUser } from "../loginUserStore"
 import {
   Button,
   Card,

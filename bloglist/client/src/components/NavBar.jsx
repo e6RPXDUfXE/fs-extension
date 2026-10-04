@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import { AppBar, Toolbar, Button, Typography } from "@mui/material"
-import { useUser, useUserActions } from "../userStore"
+import { useUser, useUserActions } from "../loginUserStore"
 import { useNotificationActions } from "../notificationStore"
 
 const NavBar = () => {
@@ -26,6 +26,10 @@ const NavBar = () => {
 
         <Button color="inherit" component={Link} to="/" sx={hoverStyle}>
           blogs
+        </Button>
+
+        <Button color="inherit" component={Link} to="/users" sx={hoverStyle}>
+          users
         </Button>
 
         {user && (
