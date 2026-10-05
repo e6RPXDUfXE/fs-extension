@@ -31,10 +31,16 @@ jobs:
         working-directory: bloglist-tests
         run: npx playwright install --with-deps chromium
 
+      - name: Create server test environment
+        working-directory: bloglist/server
+        run: |
+          cat > .env <<'EOF'
+          PORT=3003
+          MONGODB_URI=${{ secrets.TEST_MONGODB_URI }}
+          EOF
+
       - name: Run Playwright tests
         working-directory: bloglist-tests
-        env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
         run: npx playwright test
 
       - name: Upload Playwright report
