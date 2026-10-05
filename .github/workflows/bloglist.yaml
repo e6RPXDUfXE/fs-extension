@@ -36,12 +36,12 @@ jobs:
         run: |
           cat > .env <<'EOF'
           PORT=3003
+          TEST_MONGODB_URI=${{ secrets.TEST_MONGODB_URI }}
+          SECRET=${{ secrets.SECRET }}
           EOF
 
       - name: Run Playwright tests
         working-directory: bloglist-tests
-        env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
         run: npx playwright test
 
       - name: Upload Playwright report
